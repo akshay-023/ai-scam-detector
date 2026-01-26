@@ -1,13 +1,19 @@
-export async function analyzeTextMock(text) {
-  return {
-    verdict: "SCAM",
-    riskScore: 82,
-    reasons: [
-      "Urgent hiring language detected",
-      "Asks for payment or fees",
-      "No official company domain",
-      "Too-good-to-be-true salary"
-    ],
-    analyzedAt: new Date()
-  };
+import { getOpenAIClient } from "./openai.service.js";
+
+export async function analyzeScamText(text) {
+  if (process.env.AI_MODE === "mock") {
+    return {
+      verdict: "SUSPICIOUS",
+      riskScore: 72,
+      reasons: [
+        "Urgent language detected",
+        "Unverified recruiter",
+        "Requests personal information"
+      ]
+    };
+  }
+
+  const openai = await getOpenAIClient();
+
+  // real OpenAI logic here (future)
 }
