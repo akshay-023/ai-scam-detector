@@ -1,21 +1,26 @@
-let openaiClient = null;
+import OpenAI from "openai";
 
-export async function getOpenAIClient() {
-  if (process.env.AI_MODE === "mock") {
-    return null;
-  }
+let client = null;
 
-  if (!process.env.OPENAI_API_KEY) {
-    throw new Error("OPENAI_API_KEY missing");
-  }
-
-  if (!openaiClient) {
-    const { default: OpenAI } = await import("openai");
-
-    openaiClient = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
+function getClient() {
+  if (!client) {
+    client = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY || "mock"
     });
   }
+  return client;
+}
 
-  return openaiClient;
+export async function analyzeTextReal(text) {
+  const openai = getClient();
+
+  const response = await openai.chat.completions.create({
+    model: "gpt-4o-mini",
+    messages: [
+      { role: "system", content: "You are a scam detection expert." },
+      { role: "user", content: text }
+    ]
+  });
+
+  return response.choices[0].message.content;
 }

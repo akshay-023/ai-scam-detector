@@ -1,19 +1,17 @@
-import { getOpenAIClient } from "./openai.service.js";
+import { analyzeTextMock, analyzeTextReal } from "./ai.service.js";
 
-export async function analyzeScamText(text) {
-  if (process.env.AI_MODE === "mock") {
-    return {
-      verdict: "SUSPICIOUS",
-      riskScore: 72,
-      reasons: [
-        "Urgent language detected",
-        "Unverified recruiter",
-        "Requests personal information"
-      ]
-    };
+/**
+ * Selects AI mode safely based on environment
+ * Supported modes:
+ * - mock (no OpenAI call)
+ * - real (uses OpenAI API)
+ */
+export async function analyzeText(text) {
+  const mode = process.env.AI_MODE || "mock";
+
+  if (mode === "mock") {
+    return analyzeTextMock(text);
   }
 
-  const openai = await getOpenAIClient();
-
-  // real OpenAI logic here (future)
+  return analyzeTextReal(text);
 }
