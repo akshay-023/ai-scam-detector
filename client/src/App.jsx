@@ -1,61 +1,46 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
-
 import Login from "./pages/Login";
+import Register from "./pages/Register";
 import Analyze from "./pages/Analyze";
 import History from "./pages/History";
 
-/**
- * Protect routes that require authentication
- */
-function ProtectedRoute({ children }) {
+const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("token");
-  return token ? children : <Navigate to="/login" replace />;
-}
+  return token ? children : <Navigate to="/login" />;
+};
 
 function App() {
   return (
     <BrowserRouter>
-      <div className="app-wrapper">
-        {/* Top Navigation */}
-        <Navbar />
+      <Navbar />
 
-        {/* Routes */}
-        <Routes>
-          {/* Default route */}
-          <Route path="/" element={<Navigate to="/analyze" replace />} />
+      <Routes>
+        <Route path="/" element={<Navigate to="/login" />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
 
-          {/* Public route */}
-          <Route path="/login" element={<Login />} />
+        <Route
+          path="/analyze"
+          element={
+            <ProtectedRoute>
+              <Analyze />
+            </ProtectedRoute>
+          }
+        />
 
-          {/* Protected routes */}
-          <Route
-            path="/analyze"
-            element={
-              <ProtectedRoute>
-                <Analyze />
-              </ProtectedRoute>
-            }
-          />
+        <Route
+          path="/history"
+          element={
+            <ProtectedRoute>
+              <History />
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
 
-          <Route
-            path="/history"
-            element={
-              <ProtectedRoute>
-                <History />
-              </ProtectedRoute>
-            }
-          />
-
-          {/* Fallback */}
-          <Route path="*" element={<Navigate to="/analyze" replace />} />
-        </Routes>
-
-        {/* Footer with your name & copyright */}
-        <Footer />
-      </div>
+      <Footer />
     </BrowserRouter>
   );
 }

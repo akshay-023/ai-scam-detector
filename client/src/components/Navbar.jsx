@@ -1,26 +1,36 @@
-import { NavLink } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
-export default function Navbar() {
-  const logout = () => {
+const Navbar = () => {
+  const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+
+  const handleLogout = () => {
     localStorage.removeItem("token");
-    window.location.href = "/login";
+    navigate("/login");
   };
 
   return (
     <nav className="navbar">
-      <div className="nav-brand">
-        🛡️ ScamGuard AI
-        <span className="nav-owner">by Akshay Raavi</span>
-      </div>
+      <h2>🛡️ ScamGuard AI</h2>
 
       <div className="nav-links">
-        <NavLink to="/analyze">Analyze</NavLink>
-        <NavLink to="/history">History</NavLink>
-        <NavLink to="/login">Login</NavLink>
-        <button className="logout-btn" onClick={logout}>
-          Logout
-        </button>
+        {token ? (
+          <>
+            <Link to="/analyze">Analyze</Link>
+            <Link to="/history">History</Link>
+            <button onClick={handleLogout} className="logout-btn">
+              Logout
+            </button>
+          </>
+        ) : (
+          <>
+            <Link to="/login">Login</Link>
+            <Link to="/register">Register</Link>
+          </>
+        )}
       </div>
     </nav>
   );
-}
+};
+
+export default Navbar;
