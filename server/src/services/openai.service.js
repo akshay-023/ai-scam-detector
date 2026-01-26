@@ -1,20 +1,21 @@
-let openai = null;
+let openaiClient = null;
 
-export function getOpenAIClient() {
+export async function getOpenAIClient() {
   if (process.env.AI_MODE === "mock") {
     return null;
   }
 
   if (!process.env.OPENAI_API_KEY) {
-    throw new Error("OPENAI_API_KEY missing in production");
+    throw new Error("OPENAI_API_KEY missing");
   }
 
-  if (!openai) {
-    const OpenAI = (await import("openai")).default;
-    openai = new OpenAI({
+  if (!openaiClient) {
+    const { default: OpenAI } = await import("openai");
+
+    openaiClient = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
     });
   }
 
-  return openai;
+  return openaiClient;
 }
