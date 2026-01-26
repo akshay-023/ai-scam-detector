@@ -8,14 +8,14 @@ const Register = () => {
     email: "",
     password: "",
   });
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
@@ -30,8 +30,16 @@ const Register = () => {
         }
       );
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Registration failed");
+      let data = {};
+      const contentType = res.headers.get("content-type");
+
+      if (contentType && contentType.includes("application/json")) {
+        data = await res.json();
+      }
+
+      if (!res.ok) {
+        throw new Error(data.message || "Registration failed");
+      }
 
       navigate("/login");
     } catch (err) {
@@ -43,11 +51,11 @@ const Register = () => {
 
   return (
     <div className="auth-container">
-      <h2>📝 Create Account</h2>
+      <h2>📝 Register</h2>
 
       {error && <p className="error">{error}</p>}
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleRegister}>
         <input
           name="name"
           placeholder="Full Name"

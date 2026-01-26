@@ -23,8 +23,16 @@ const Login = () => {
         }
       );
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Login failed");
+      let data = {};
+      const contentType = res.headers.get("content-type");
+
+      if (contentType && contentType.includes("application/json")) {
+        data = await res.json();
+      }
+
+      if (!res.ok) {
+        throw new Error(data.message || "Login failed");
+      }
 
       localStorage.setItem("token", data.token);
       navigate("/analyze");
@@ -37,7 +45,7 @@ const Login = () => {
 
   return (
     <div className="auth-container">
-      <h2>🔐 Secure Login</h2>
+      <h2>🔐 Login</h2>
 
       {error && <p className="error">{error}</p>}
 
@@ -59,7 +67,7 @@ const Login = () => {
         />
 
         <button disabled={loading}>
-          {loading ? "Logging in..." : "Access Dashboard"}
+          {loading ? "Logging in..." : "Login"}
         </button>
       </form>
 
