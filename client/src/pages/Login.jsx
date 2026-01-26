@@ -1,6 +1,7 @@
 import { useState } from "react";
-x";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+
+const API_BASE = import.meta.env.VITE_API_URL;
 
 export default function Login() {
   const navigate = useNavigate();
@@ -13,14 +14,11 @@ export default function Login() {
     setError("");
 
     try {
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/auth/login`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password }),
-        }
-      );
+      const res = await fetch(`${API_BASE}/api/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
 
       const data = await res.json();
 
@@ -28,10 +26,7 @@ export default function Login() {
         throw new Error(data.message || "Login failed");
       }
 
-      // ✅ SAVE TOKEN
       localStorage.setItem("token", data.token);
-
-      // ✅ REDIRECT
       navigate("/analyze");
     } catch (err) {
       setError(err.message);
@@ -40,7 +35,9 @@ export default function Login() {
 
   return (
     <div className="auth-container">
-      <h2>Secure Login</h2>
+      <h2>Login</h2>
+
+      {error && <p style={{ color: "red" }}>{error}</p>}
 
       <form onSubmit={handleLogin}>
         <input
@@ -59,10 +56,12 @@ export default function Login() {
           required
         />
 
-        <button type="submit">Access Dashboard</button>
+        <button type="submit">Login</button>
       </form>
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      <p>
+        New user? <Link to="/register">Register</Link>
+      </p>
     </div>
   );
 }

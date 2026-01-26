@@ -5,44 +5,28 @@ import Scan from "../models/Scan.js";
 
 const router = express.Router();
 
-/**
- * POST /analyze
- * Protected route – requires JWT
- */
 router.post("/", auth, async (req, res) => {
   try {
     const { text } = req.body;
 
-    if (!text || text.trim().length === 0) {
-      return res.status(400).json({
-        message: "Text is required for analysis",
-      });
+    if (!text || !text.trim()) {
+      return res.status(400).json({ message: "Text is required" });
     }
 
-    // 🔍 Run AI analysis (mock or real based on env)
-    const analysisResult = await analyzeText(text);
+    const result = await analyzeText(text);
 
-    // 🧾 Save scan to DB
-    const scan = await Scan.create({
+    await Scan.create({
       user: req.user.id,
       text,
-      verdict: analysisResult.verdict,
-      riskScore: analysisResult.riskScore,
-      reasons: analysisResult.reasons,
+      verdict: result.verdict,
+      riskScore: result.riskScore,
+      reasons: result.reasons,
     });
 
-    // ✅ Send response
-    res.json({
-      verdict: scan.verdict,
-      riskScore: scan.riskScore,
-      reasons: scan.reasons,
-      createdAt: scan.createdAt,
-    });
-  } catch (error) {
-    console.error("Analyze error:", error);
-    res.status(500).json({
-      message: "Failed to analyze text",
-    });
+    res.json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Analysis failed" });
   }
 });
 
