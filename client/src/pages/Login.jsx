@@ -1,21 +1,20 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+x";
+import { useNavigate } from "react-router-dom";
 
-const Login = () => {
+export default function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setLoading(true);
     setError("");
 
     try {
       const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/auth/login`,
+        `${import.meta.env.VITE_API_URL}/auth/login`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -23,31 +22,25 @@ const Login = () => {
         }
       );
 
-      let data = {};
-      const contentType = res.headers.get("content-type");
-
-      if (contentType && contentType.includes("application/json")) {
-        data = await res.json();
-      }
+      const data = await res.json();
 
       if (!res.ok) {
         throw new Error(data.message || "Login failed");
       }
 
+      // ✅ SAVE TOKEN
       localStorage.setItem("token", data.token);
+
+      // ✅ REDIRECT
       navigate("/analyze");
     } catch (err) {
       setError(err.message);
-    } finally {
-      setLoading(false);
     }
   };
 
   return (
     <div className="auth-container">
-      <h2>🔐 Login</h2>
-
-      {error && <p className="error">{error}</p>}
+      <h2>Secure Login</h2>
 
       <form onSubmit={handleLogin}>
         <input
@@ -66,16 +59,10 @@ const Login = () => {
           required
         />
 
-        <button disabled={loading}>
-          {loading ? "Logging in..." : "Login"}
-        </button>
+        <button type="submit">Access Dashboard</button>
       </form>
 
-      <p style={{ marginTop: "12px" }}>
-        New user? <Link to="/register">Create an account</Link>
-      </p>
+      {error && <p style={{ color: "red" }}>{error}</p>}
     </div>
   );
-};
-
-export default Login;
+}
