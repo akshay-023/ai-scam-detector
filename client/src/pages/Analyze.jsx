@@ -16,7 +16,7 @@ export default function Analyze() {
 
     const token = localStorage.getItem("token");
     if (!token) {
-      setError("Please login again.");
+      setError("Session expired. Please login again.");
       return;
     }
 
@@ -25,7 +25,7 @@ export default function Analyze() {
     setResult(null);
 
     try {
-      const res = await fetch(`${API_BASE}/analyze`, {
+      const res = await fetch(`${API_BASE}/api/analyze`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
