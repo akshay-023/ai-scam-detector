@@ -8,10 +8,12 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
 
     try {
       const res = await fetch(`${API_BASE}/api/auth/login`, {
@@ -20,7 +22,12 @@ export default function Login() {
         body: JSON.stringify({ email, password }),
       });
 
-      const data = await res.json();
+      const text = await res.text();
+      if (!text) {
+        throw new Error("Empty response from server");
+      }
+
+      const data = JSON.parse(text);
 
       if (!res.ok) {
         throw new Error(data.message || "Login failed");
@@ -30,12 +37,14 @@ export default function Login() {
       navigate("/analyze");
     } catch (err) {
       setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="auth-container">
-      <h2>Login</h2>
+      <h2>🔐 Login</h2>
 
       {error && <p style={{ color: "red" }}>{error}</p>}
 
@@ -56,10 +65,12 @@ export default function Login() {
           required
         />
 
-        <button type="submit">Login</button>
+        <button disabled={loading}>
+          {loading ? "Logging in..." : "Login"}
+        </button>
       </form>
 
-      <p>
+      <p style={{ marginTop: 12 }}>
         New user? <Link to="/register">Register</Link>
       </p>
     </div>
