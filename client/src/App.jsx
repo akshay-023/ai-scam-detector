@@ -1,11 +1,13 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import Navbar from "./components/Navbar";
-import Register from "./pages/Register";
+import ProtectedRoute from "./components/ProtectedRoute";
+import Footer from "./components/Footer";
+
 import Login from "./pages/Login";
+import Register from "./pages/Register";
 import Analyze from "./pages/Analyze";
 import History from "./pages/History";
-import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
@@ -13,10 +15,8 @@ function App() {
       <Navbar />
 
       <Routes>
-        <Route path="/" element={<Navigate to="/analyze" />} />
-
-        <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
 
         <Route
           path="/analyze"
@@ -35,7 +35,18 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <Analyze />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
+
+      <Footer />
     </Router>
   );
 }

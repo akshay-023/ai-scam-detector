@@ -3,12 +3,31 @@ export default function Footer() {
     <footer style={styles.footer}>
       <div style={styles.inner}>
         <p style={styles.text}>
-          © {new Date().getFullYear()}{" "}
-          <strong>Akshay</strong> — AI Scam Detector
+          © {new Date().getFullYear()} <strong>Akshay Raavi</strong> — ScamGuard AI
         </p>
 
         <p style={styles.subtext}>
-          Built with MERN • AI-powered analysis • Deployed on Render
+          AI-powered scam detection tool • Built with MERN Stack • Powered by OpenAI
+        </p>
+
+        <p style={styles.links}>
+          <a
+            href="https://github.com/akshay-023"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={styles.link}
+          >
+            GitHub
+          </a>
+          {" • "}
+          <a
+            href="https://ai-scam-detector-tau.vercel.app"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={styles.link}
+          >
+            Live Demo
+          </a>
         </p>
       </div>
     </footer>
@@ -23,17 +42,32 @@ const styles = {
     textAlign: "center",
     background: "linear-gradient(to right, #f9fafb, #ffffff)",
   },
+
   inner: {
     maxWidth: "1000px",
     margin: "0 auto",
   },
+
   text: {
     fontSize: "0.95rem",
     color: "#111827",
+    fontWeight: "500",
   },
+
   subtext: {
     marginTop: "0.4rem",
-    fontSize: "0.8rem",
+    fontSize: "0.82rem",
     color: "#6b7280",
+  },
+
+  links: {
+    marginTop: "0.5rem",
+    fontSize: "0.8rem",
+  },
+
+  link: {
+    color: "#2563eb",
+    textDecoration: "none",
+    fontWeight: "500",
   },
 };
