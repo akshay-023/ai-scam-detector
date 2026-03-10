@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
+const API_BASE = import.meta.env.VITE_API_URL;
+
 const Register = () => {
   const navigate = useNavigate();
 
@@ -26,11 +28,8 @@ const Register = () => {
     setLoading(true);
     setError("");
 
-    console.log("Register button clicked");
-    console.log("Form data:", form);
-
     try {
-      const res = await fetch("http://localhost:5000/api/auth/register", {
+      const res = await fetch(`${API_BASE}/api/auth/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -38,10 +37,8 @@ const Register = () => {
         body: JSON.stringify(form),
       });
 
-      console.log("Response received:", res);
-
-      let data = {};
       const contentType = res.headers.get("content-type");
+      let data = {};
 
       if (contentType && contentType.includes("application/json")) {
         data = await res.json();
@@ -50,8 +47,6 @@ const Register = () => {
       if (!res.ok) {
         throw new Error(data.message || "Registration failed");
       }
-
-      console.log("Registration successful:", data);
 
       navigate("/login");
     } catch (err) {
