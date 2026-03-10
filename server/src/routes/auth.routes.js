@@ -5,27 +5,28 @@ import User from "../models/User.js";
 
 const router = express.Router();
 
-/* =========================
-   REGISTER USER
-========================= */
+/**
+ * POST /api/auth/register
+ */
 router.post("/register", async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    if (!email || !password) {
-      return res
-        .status(400)
-        .json({ message: "Email and password are required" });
+    console.log("Register request body:", req.body);
+
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: "All fields are required" });
     }
 
     const existingUser = await User.findOne({ email });
+
     if (existingUser) {
       return res.status(400).json({ message: "User already exists" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    await User.create({
+    const user = await User.create({
       name,
       email,
       password: hashedPassword,
@@ -33,26 +34,29 @@ router.post("/register", async (req, res) => {
 
     return res.status(201).json({
       message: "User registered successfully",
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+      },
     });
   } catch (err) {
     console.error("Register error:", err);
-    return res.status(500).json({
-      message: "Registration failed",
-    });
+    return res.status(500).json({ message: "Server error" });
   }
 });
 
-/* =========================
-   LOGIN USER
-========================= */
+/**
+ * POST /api/auth/login
+ */
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
 
+    console.log("Login request body:", req.body);
+
     if (!email || !password) {
-      return res
-        .status(400)
-        .json({ message: "Email and password are required" });
+      return res.status(400).json({ message: "Email and password required" });
     }
 
     const user = await User.findOne({ email });
@@ -68,16 +72,20 @@ router.post("/login", async (req, res) => {
     const token = jwt.sign(
       { id: user._id },
       process.env.JWT_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: "1d" }
     );
 
-    // ✅ ALWAYS return JSON
-    return res.json({ token });
+    return res.json({
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+      },
+    });
   } catch (err) {
     console.error("Login error:", err);
-    return res.status(500).json({
-      message: "Login failed",
-    });
+    return res.status(500).json({ message: "Server error" });
   }
 });
 

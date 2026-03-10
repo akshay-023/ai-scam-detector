@@ -1,25 +1,22 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+
 import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
-import Login from "./pages/Login";
 import Register from "./pages/Register";
+import Login from "./pages/Login";
 import Analyze from "./pages/Analyze";
 import History from "./pages/History";
-
-const ProtectedRoute = ({ children }) => {
-  const token = localStorage.getItem("token");
-  return token ? children : <Navigate to="/login" />;
-};
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
-    <BrowserRouter>
+    <Router>
       <Navbar />
 
       <Routes>
-        <Route path="/" element={<Navigate to="/login" />} />
-        <Route path="/login" element={<Login />} />
+        <Route path="/" element={<Navigate to="/analyze" />} />
+
         <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
 
         <Route
           path="/analyze"
@@ -39,9 +36,7 @@ function App() {
           }
         />
       </Routes>
-
-      <Footer />
-    </BrowserRouter>
+    </Router>
   );
 }
 

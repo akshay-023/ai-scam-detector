@@ -17,7 +17,7 @@ router.post("/", auth, async (req, res) => {
 
     await Scan.create({
       user: req.user.id,
-      text,
+      inputText: text,
       verdict: result.verdict,
       riskScore: result.riskScore,
       reasons: result.reasons,

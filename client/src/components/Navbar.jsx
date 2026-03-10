@@ -11,14 +11,22 @@ const Navbar = () => {
 
   return (
     <nav className="navbar">
-      <h2>🛡️ ScamGuard AI</h2>
+      <Link
+        to={token ? "/analyze" : "/login"}
+        style={{
+          textDecoration: "none",
+          color: "inherit",
+        }}
+      >
+        <h2 style={{ margin: 0 }}>🛡️ ScamGuard AI</h2>
+      </Link>
 
       <div className="nav-links">
         {token ? (
           <>
             <Link to="/analyze">Analyze</Link>
             <Link to="/history">History</Link>
-            <button onClick={handleLogout} className="logout-btn">
+            <button type="button" onClick={handleLogout} className="logout-btn">
               Logout
             </button>
           </>

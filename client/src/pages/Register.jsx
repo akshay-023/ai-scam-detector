@@ -3,32 +3,42 @@ import { Link, useNavigate } from "react-router-dom";
 
 const Register = () => {
   const navigate = useNavigate();
+
   const [form, setForm] = useState({
     name: "",
     email: "",
     password: "",
   });
+
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value,
+    });
   };
 
   const handleRegister = async (e) => {
     e.preventDefault();
+
     setLoading(true);
     setError("");
 
+    console.log("Register button clicked");
+    console.log("Form data:", form);
+
     try {
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/auth/register`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(form),
-        }
-      );
+      const res = await fetch("http://localhost:5000/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(form),
+      });
+
+      console.log("Response received:", res);
 
       let data = {};
       const contentType = res.headers.get("content-type");
@@ -41,9 +51,12 @@ const Register = () => {
         throw new Error(data.message || "Registration failed");
       }
 
+      console.log("Registration successful:", data);
+
       navigate("/login");
     } catch (err) {
-      setError(err.message);
+      console.error("Register error:", err);
+      setError(err.message || "Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -82,7 +95,7 @@ const Register = () => {
           required
         />
 
-        <button disabled={loading}>
+        <button type="submit" disabled={loading}>
           {loading ? "Creating..." : "Register"}
         </button>
       </form>
