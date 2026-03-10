@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 
+const API_BASE = import.meta.env.VITE_API_URL;
+
 const Analyze = () => {
   const [text, setText] = useState("");
   const [result, setResult] = useState(null);
@@ -36,14 +38,21 @@ Hiring Team`;
     try {
       const token = localStorage.getItem("token");
 
-      const res = await fetch("http://localhost:5000/api/history", {
+      const res = await fetch(`${API_BASE}/api/history`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
-      const data = await res.json();
+      const contentType = res.headers.get("content-type");
+      let data = [];
+
+      if (contentType && contentType.includes("application/json")) {
+        data = await res.json();
+      } else {
+        throw new Error("Invalid response from history API");
+      }
 
       if (!res.ok) {
         throw new Error(data.message || "Failed to fetch recent scans");
@@ -70,7 +79,7 @@ Hiring Team`;
     try {
       const token = localStorage.getItem("token");
 
-      const res = await fetch("http://localhost:5000/api/analyze", {
+      const res = await fetch(`${API_BASE}/api/analyze`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -79,7 +88,14 @@ Hiring Team`;
         body: JSON.stringify({ text }),
       });
 
-      const data = await res.json();
+      const contentType = res.headers.get("content-type");
+      let data = {};
+
+      if (contentType && contentType.includes("application/json")) {
+        data = await res.json();
+      } else {
+        throw new Error("Invalid response from analyze API");
+      }
 
       if (!res.ok) {
         throw new Error(data.message || "Analysis failed");
