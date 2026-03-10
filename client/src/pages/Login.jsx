@@ -22,12 +22,14 @@ export default function Login() {
         body: JSON.stringify({ email, password }),
       });
 
-      const text = await res.text();
-      if (!text) {
-        throw new Error("Empty response from server");
-      }
+      const contentType = res.headers.get("content-type");
+      let data = {};
 
-      const data = JSON.parse(text);
+      if (contentType && contentType.includes("application/json")) {
+        data = await res.json();
+      } else {
+        throw new Error("Server returned invalid response. Check deployed backend URL.");
+      }
 
       if (!res.ok) {
         throw new Error(data.message || "Login failed");
@@ -36,7 +38,7 @@ export default function Login() {
       localStorage.setItem("token", data.token);
       navigate("/analyze");
     } catch (err) {
-      setError(err.message);
+      setError(err.message || "Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -65,7 +67,7 @@ export default function Login() {
           required
         />
 
-        <button disabled={loading}>
+        <button type="submit" disabled={loading}>
           {loading ? "Logging in..." : "Login"}
         </button>
       </form>

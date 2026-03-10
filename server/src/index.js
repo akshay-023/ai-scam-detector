@@ -11,14 +11,25 @@ dotenv.config();
 
 const app = express();
 
-// Connect database
+// Connect MongoDB
 connectDB();
 
+
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "https://ai-scam-detector-tau.vercel.app",
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
+
 // Middleware
-app.use(cors());
 app.use(express.json());
 
-// Health route
+// Health check route
 app.get("/", (req, res) => {
   res.send("ScamGuard AI API is running...");
 });
@@ -30,6 +41,7 @@ app.use("/api/history", historyRoutes);
 
 // Start server
 const PORT = process.env.PORT || 5000;
+
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
